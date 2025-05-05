@@ -57,8 +57,6 @@ fn write_base(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 }
 
 fn write_outer_plate(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
-    let sec = input.section;
-
     let h = input.section.h;
     let t = input.flange.outer_plate.t;
     let l = input.flange.outer_plate.l;
@@ -200,6 +198,49 @@ fn write_web_bolt(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     Ok(())
 }
 
+pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
+    let h = input.section.h;
+    let gap = 10.0;
+    let e = 40.0;
+    let nw = input.web.bolt.nw;
+    let pc = input.web.bolt.pc;
+    let layer = "0".to_string();
+    let text_height = 100.0;
+    let text_rotation_angle = 0.0;
+    let distance = -100.0;
+    let y0 = 0.0;
+
+    let x1 = -gap / 2.0 - e;
+    let x2 = gap / 2.0 + e;
+
+    write_dimension(
+        drawing,
+        (x1, y0),
+        (x2, y0),
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let y0 = -2.0 * text_height;
+
+    let x1 = -gap / 2.0 - 2.0 * e - (nw - 1) as f64 * pc;
+    let x2 = -x1;
+
+    write_dimension(
+        drawing,
+        (x1, y0),
+        (x2, y0),
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    Ok(())
+}
+
 pub fn write_x_view(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     set_layer(drawing, input)?;
 
@@ -214,6 +255,8 @@ pub fn write_x_view(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     write_web_plate(drawing, input)?;
 
     write_web_bolt(drawing, input)?;
+
+    write_dim(drawing, input)?;
 
     Ok(())
 }
