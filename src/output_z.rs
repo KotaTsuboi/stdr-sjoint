@@ -162,7 +162,7 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     let layer = "0".to_string();
     let text_height = 100.0;
     let text_rotation_angle = 0.0;
-    let distance = 500.0;
+    let distance = 100.0;
     let y0 = GAP_BETWEEN_VIEW + b;
 
     let x1 = -gap / 2.0 - e;
@@ -170,10 +170,8 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     write_dimension(
         drawing,
-        x1,
-        y0,
-        x2,
-        y0,
+        (x1, y0),
+        (x2, y0),
         text_height,
         text_rotation_angle,
         distance,
@@ -182,13 +180,12 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     let x1 = x2;
     let x2 = x2 + pc * (nf - 1) as f64;
+    let y0 = y0 + 2.0 * text_height;
 
     write_dimension(
         drawing,
-        x1,
-        y0,
-        x2,
-        y0,
+        (x1, y0),
+        (x2, y0),
         text_height,
         text_rotation_angle,
         distance,
@@ -197,10 +194,8 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     write_dimension(
         drawing,
-        -x1,
-        y0,
-        -x2,
-        y0,
+        (-x1, y0),
+        (-x2, y0),
         text_height,
         text_rotation_angle,
         distance,
@@ -209,13 +204,12 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     let x1 = x2;
     let x2 = x2 + e;
+    let y0 = y0 - 2.0 * text_height;
 
     write_dimension(
         drawing,
-        x1,
-        y0,
-        x2,
-        y0,
+        (x1, y0),
+        (x2, y0),
         text_height,
         text_rotation_angle,
         distance,
@@ -224,10 +218,8 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     write_dimension(
         drawing,
-        -x1,
-        y0,
-        -x2,
-        y0,
+        (-x1, y0),
+        (-x2, y0),
         text_height,
         text_rotation_angle,
         distance,
@@ -235,14 +227,29 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     )?;
 
     let x1 = -x2;
-    let y0 = y0 + 2.0 * text_height;
+    let y0 = y0 + 4.0 * text_height;
 
     write_dimension(
         drawing,
-        x1,
-        y0,
-        x2,
-        y0,
+        (x1, y0),
+        (x2, y0),
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let g1 = input.flange.gauge.g1;
+    let x0 = gap / 2.0 + 2.0 * e + pc * (nf - 1) as f64;
+    let y1 = GAP_BETWEEN_VIEW + b / 2.0 - g1 / 2.0;
+    let y2 = GAP_BETWEEN_VIEW + b / 2.0 + g1 / 2.0;
+
+    let text_rotation_angle = 90.0;
+
+    write_dimension(
+        drawing,
+        (x0, y1),
+        (x0, y2),
         text_height,
         text_rotation_angle,
         distance,

@@ -58,20 +58,21 @@ pub fn write_circle(drawing: &mut Drawing, x: f64, y: f64, r: f64, layer: &str) 
 
 pub fn write_dimension(
     drawing: &mut Drawing,
-    x1: f64,
-    y1: f64,
-    x2: f64,
-    y2: f64,
+    p1: (f64, f64),
+    p2: (f64, f64),
     text_height: f64,
     text_rotation_angle: f64,
     distance: f64,
     layer: String,
 ) -> Result<()> {
+    let (x1, y1) = p1;
+    let (x2, y2) = p2;
+
     let dim_style = DimStyle {
         name: "mydim".to_string(),
         dimensioning_text_height: text_height,
         dimensioning_arrow_size: text_height / 2.0,
-        dimension_extension_line_offset: text_height,
+        dimension_extension_line_offset: 0.0,
         ..Default::default()
     };
 
