@@ -115,27 +115,38 @@ fn write_flange_bolt(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     let nf = input.flange.bolt.nf;
     let mf = input.flange.bolt.mf;
     let gap = 10.0;
+    let ey = if is_staggered {
+        (b - g1 - g2 * 2 as f64) / 2.0
+    } else {
+        (b - g1 - g2 * (mf - 2) as f64) / 2.0
+    };
     let x0 = gap / 2.0 + e;
-    let y0 = (b - g1 - g2 * (mf - 1) as f64) / 2.0;
+    let y0 = ey;
     let r = input.bolt.diameter as f64 / 2.0;
 
     for i in 0..nf {
-        let x = x0 + i as f64 * pc;
-        let y = y0 + if is_staggered && i % 2 == 1 { g2 } else { 0.0 };
+        for j in 0..(mf / 2) {
+            let x = x0 + i as f64 * pc;
+            let y = if is_staggered {
+                y0 + if i % 2 == 1 { g2 } else { 0.0 }
+            } else {
+                y0 + j as f64 * g2
+            };
 
-        let layer = input.layer_name.plate.clone();
+            let layer = input.layer_name.plate.clone();
 
-        write_circle(drawing, x, y + GAP_BETWEEN_VIEW, r, &layer)?;
-        write_circle(drawing, -x, y + GAP_BETWEEN_VIEW, r, &layer)?;
-        write_circle(drawing, x, b - y + GAP_BETWEEN_VIEW, r, &layer)?;
-        write_circle(drawing, -x, b - y + GAP_BETWEEN_VIEW, r, &layer)?;
+            write_circle(drawing, x, y + GAP_BETWEEN_VIEW, r, &layer)?;
+            write_circle(drawing, -x, y + GAP_BETWEEN_VIEW, r, &layer)?;
+            write_circle(drawing, x, b - y + GAP_BETWEEN_VIEW, r, &layer)?;
+            write_circle(drawing, -x, b - y + GAP_BETWEEN_VIEW, r, &layer)?;
 
-        let layer = input.layer_name.bolt.clone();
+            let layer = input.layer_name.bolt.clone();
 
-        write_cross(drawing, x, y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
-        write_cross(drawing, -x, y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
-        write_cross(drawing, x, b - y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
-        write_cross(drawing, -x, b - y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
+            write_cross(drawing, x, y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
+            write_cross(drawing, -x, y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
+            write_cross(drawing, x, b - y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
+            write_cross(drawing, -x, b - y + GAP_BETWEEN_VIEW, 20.0, &layer)?;
+        }
     }
 
     Ok(())
