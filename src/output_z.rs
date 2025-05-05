@@ -152,33 +152,103 @@ fn write_flange_bolt(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     Ok(())
 }
 
-pub fn write_x_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
+pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
+    let b = input.section.b;
     let gap = 10.0;
     let e = 40.0;
+    let nf = input.flange.bolt.nf;
     let is_staggered = input.flange.bolt.is_staggered;
     let pc = if is_staggered { 45.0 } else { 60.0 };
     let layer = "0".to_string();
+    let text_height = 100.0;
     let text_rotation_angle = 0.0;
-    let x0 = gap / 2.0;
-    let y0 = GAP_BETWEEN_VIEW;
+    let distance = 500.0;
+    let y0 = GAP_BETWEEN_VIEW + b;
+
+    let x1 = -gap / 2.0 - e;
+    let x2 = gap / 2.0 + e;
+
     write_dimension(
         drawing,
-        -gap / 2.0,
+        x1,
         y0,
-        gap / 2.0,
+        x2,
         y0,
+        text_height,
         text_rotation_angle,
+        distance,
         layer.clone(),
     )?;
+
+    let x1 = x2;
+    let x2 = x2 + pc * (nf - 1) as f64;
+
     write_dimension(
         drawing,
-        gap / 2.0,
+        x1,
         y0,
-        gap / 2.0 + e,
+        x2,
         y0,
+        text_height,
         text_rotation_angle,
+        distance,
         layer.clone(),
     )?;
+
+    write_dimension(
+        drawing,
+        -x1,
+        y0,
+        -x2,
+        y0,
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let x1 = x2;
+    let x2 = x2 + e;
+
+    write_dimension(
+        drawing,
+        x1,
+        y0,
+        x2,
+        y0,
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    write_dimension(
+        drawing,
+        -x1,
+        y0,
+        -x2,
+        y0,
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let x1 = -x2;
+    let y0 = y0 + 2.0 * text_height;
+
+    write_dimension(
+        drawing,
+        x1,
+        y0,
+        x2,
+        y0,
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
     Ok(())
 }
 
@@ -188,6 +258,8 @@ pub fn write_z_view(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     write_outer_plate(drawing, input)?;
 
     write_flange_bolt(drawing, input)?;
+
+    write_dim(drawing, input)?;
 
     Ok(())
 }

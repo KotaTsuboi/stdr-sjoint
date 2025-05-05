@@ -62,32 +62,32 @@ pub fn write_dimension(
     y1: f64,
     x2: f64,
     y2: f64,
+    text_height: f64,
     text_rotation_angle: f64,
+    distance: f64,
     layer: String,
 ) -> Result<()> {
     let dim_style = DimStyle {
         name: "mydim".to_string(),
-        dimensioning_text_height: 1000.0,
-        dimensioning_arrow_size: 500.0,
-        dimension_extension_line_offset: 2000.0,
+        dimensioning_text_height: text_height,
+        dimensioning_arrow_size: text_height / 2.0,
+        dimension_extension_line_offset: text_height,
         ..Default::default()
     };
 
     drawing.add_dim_style(dim_style);
 
-    let gap = 5000.0;
-
     let theta = text_rotation_angle / 180.0 * std::f64::consts::PI;
 
     let dimension_base = DimensionBase {
         definition_point_1: Point {
-            x: (x1 + x2) / 2.0,
-            y: (y1 + y2) / 2.0 - gap * f64::cos(theta),
+            x: (x1 + x2) / 2.0 + distance * f64::sin(theta),
+            y: (y1 + y2) / 2.0 + distance * f64::cos(theta),
             z: 0.0,
         },
         text_mid_point: Point {
-            x: (x1 + x2) / 2.0,
-            y: (y1 + y2) / 2.0 - gap * f64::cos(theta),
+            x: (x1 + x2) / 2.0 + distance * f64::sin(theta),
+            y: (y1 + y2) / 2.0 + distance * f64::cos(theta),
             z: 0.0,
         },
         dimension_style_name: "mydim".to_string(),
