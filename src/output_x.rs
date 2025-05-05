@@ -202,8 +202,10 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
     let h = input.section.h;
     let gap = 10.0;
     let e = 40.0;
+    let mw = input.web.bolt.mw;
     let nw = input.web.bolt.nw;
     let pc = input.web.bolt.pc;
+    let g = 60.0;
     let layer = "0".to_string();
     let text_height = 100.0;
     let text_rotation_angle = 0.0;
@@ -225,13 +227,43 @@ pub fn write_dim(drawing: &mut Drawing, input: &HJoint) -> Result<()> {
 
     let y0 = -2.0 * text_height;
 
-    let x1 = -gap / 2.0 - 2.0 * e - (nw - 1) as f64 * pc;
+    let x1 = -gap / 2.0 - 2.0 * e - (nw - 1) as f64 * g;
     let x2 = -x1;
 
     write_dimension(
         drawing,
         (x1, y0),
         (x2, y0),
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let x0 = gap / 2.0 + 2.0 * e + (nw - 1) as f64 * g;
+    let y1 = h / 2.0 - (mw - 1) as f64 * pc / 2.0;
+    let y2 = h / 2.0 + (mw - 1) as f64 * pc / 2.0;
+    let text_rotation_angle = 90.0;
+    let distance = 100.0;
+
+    write_dimension(
+        drawing,
+        (x0, y1),
+        (x0, y2),
+        text_height,
+        text_rotation_angle,
+        distance,
+        layer.clone(),
+    )?;
+
+    let x0 = x0 + 2.0 * text_height;
+    let y1 = y1 - e;
+    let y2 = y2 + e;
+
+    write_dimension(
+        drawing,
+        (x0, y1),
+        (x0, y2),
         text_height,
         text_rotation_angle,
         distance,
